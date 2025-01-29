@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import requests
 import asyncio
 import aiohttp
@@ -33,7 +33,7 @@ def perform_request(method, url, headers, body):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return send_file('index.html')
 
 @app.route('/test-request', methods=['POST'])
 def test_request():
