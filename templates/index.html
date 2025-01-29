@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UltraHTTP | Next-Gen API Testing Platform</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #00ff00;
+            --secondary-color: #ff00ff;
+            --background-color: #000000;
+            --text-color: #ffffff;
+            --accent-color: #0000ff;
+            --error-color: #ff0000;
+            --success-color: #00ff00;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Glitch effect */
+        .glitch {
+            position: relative;
+            color: var(--primary-color);
+            font-size: 4rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            animation: glitch 1s linear infinite;
+        }
+
+        @keyframes glitch {
+            2%, 64% {
+                transform: translate(2px, 0) skew(0deg);
+            }
+            4%, 60% {
+                transform: translate(-2px, 0) skew(0deg);
+            }
+            62% {
+                transform: translate(0, 0) skew(5deg);
+            }
+        }
+
+        .glitch:before,
+        .glitch:after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch:before {
+            left: 2px;
+            text-shadow: -2px 0 var(--secondary-color);
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim 2s linear infinite alternate-reverse;
+        }
+
+        .glitch:after {
+            left: -2px;
+            text-shadow: -2px 0 var(--accent-color);
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim 2s linear infinite alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% {
+                clip: rect(51px, 9999px, 28px, 0);
+            }
+            20% {
+                clip: rect(41px, 9999px, 76px, 0);
+            }
+            40% {
+                clip: rect(96px, 9999px, 4px, 0);
+            }
+            60% {
+                clip: rect(82px, 9999px, 31px, 0);
+            }
+            80% {
+                clip: rect(35px, 9999px, 100px, 0);
+            }
+            100% {
+                clip: rect(67px, 9999px, 89px, 0);
+            }
+        }
+
+        /* Neon button */
+        .neon-button {
+            position: relative;
+            display: inline-block;
+            padding: 15px 30px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            text-decoration: none;
+            text-transform: uppercase;
+            overflow: hidden;
+            transition: 0.5s;
+            letter-spacing: 4px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .neon-button:hover {
+            background: var(--primary-color);
+            color: var(--background-color);
+            box-shadow: 0 0 5px var(--primary-color),
+                        0 0 25px var(--primary-color),
+                        0 0 50px var(--primary-color),
+                        0 0 200px var(--primary-color);
+        }
+
+        .neon-button span {
+            position: absolute;
+            display: block;
+        }
+
+        .neon-button span:nth-child(1) {
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-color));
+            animation: btn-anim1 1s linear infinite;
+        }
+
+        @keyframes btn-anim1 {
+            0% {
+                left: -100%;
+            }
+            50%,100% {
+                left: 100%;
+            }
+        }
+
+        .neon-button span:nth-child(2) {
+            top: -100%;
+            right: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, var(--primary-color));
+            animation: btn-anim2 1s linear infinite;
+            animation-delay: .25s;
+        }
+
+        @keyframes btn-anim2 {
+            0% {
+                top: -100%;
+            }
+            50%,100% {
+                top: 100%;
+            }
+        }
+
+        .neon-button span:nth-child(3) {
+            bottom: 0;
+            right: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(270deg, transparent, var(--primary-color));
+            animation: btn-anim3 1s linear infinite;
+            animation-delay: .5s;
+        }
+
+        @keyframes btn-anim3 {
+            0% {
+                right: -100%;
+            }
+            50%,100% {
+                right: 100%;
+            }
+        }
+
+        .neon-button span:nth-child(4) {
+            bottom: -100%;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(360deg, transparent, var(--primary-color));
+            animation: btn-anim4 1s linear infinite;
+            animation-delay: .75s;
+        }
+
+        @keyframes btn-anim4 {
+            0% {
+                bottom: -100%;
+            }
+            50%,100% {
+                bottom: 100%;
+            }
+        }
+
+        /* Header styles */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        header.scrolled {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Hero section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+        }
+
+        /* Features section */
+        .features {
+            padding: 100px 0;
+        }
+
+        .features h2 {
+            font-size: 3rem;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 255, 0, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .feature-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Tester section */
+        .tester {
+            padding: 100px 0;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .tester h2 {
+            font-size: 3rem;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .tester-form {
+            display: grid;
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 10px;
+        }
+
+        .form-group label {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--primary-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        /* Response area */
+        .response-area {
+            margin-top: 50px;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .response-area h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        #response {
+            font-family: 'Roboto Mono', monospace;
+            white-space: pre-wrap;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        /* Skeleton loading */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .features h2,
+            .tester h2 {
+                font-size: 2.5rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        /* Mobile menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+        }
+
+        .mobile-menu a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.5rem;
+            margin: 20px 0;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-menu a:hover {
+            color: var(--primary-color);
+        }
+
+        .close-menu-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        footer {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-Here's the continuation of the text stream from the cut-off point:
+
+px;
+        }
+
+        .footer-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-social a {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">UltraHTTP</div>
+                <nav class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#tester">Tester</a>
+                    <a href="#about">About</a>
+                </nav>
+                <button class="mobile-menu-btn">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-menu">
+        <button class="close-menu-btn">&times;</button>
+        <a href="#features">Features</a>
+        <a href="#tester">Tester</a>
+        <a href="#about">About</a>
+    </div>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="glitch" data-text="UltraHTTP">UltraHTTP</h1>
+                    <p>Next-Gen API Testing Platform</p>
+                    <a href="#tester" class="neon-button">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        Start Testing
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2>Key Features</h2>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">🚀</div>
+                        <h3>Lightning Fast</h3>
+                        <p>Optimized for speed and efficiency</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Secure Testing</h3>
+                        <p>Built-in security features for safe API testing</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📊</div>
+                        <h3>Advanced Analytics</h3>
+                        <p>Detailed insights and performance metrics</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔧</div>
+                        <h3>Customizable</h3>
+                        <p>Tailor the platform to your specific needs</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tester" class="tester">
+            <div class="container">
+                <h2>HTTP Request Tester</h2>
+                <form id="requestForm" class="tester-form">
+                    <div class="form-group">
+                        <label for="url">URL:</label>
+                        <input type="text" id="url" required placeholder="https://api.example.com/endpoint">
+                    </div>
+                    <div class="form-group">
+                        <label for="method">Method:</label>
+                        <select id="method">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="PATCH">PATCH</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="headers">Headers (JSON format):</label>
+                        <textarea id="headers" rows="4" placeholder='{"Content-Type": "application/json"}'></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="body">Request Body:</label>
+                        <textarea id="body" rows="6" placeholder='{"key": "value"}'></textarea>
+                    </div>
+                    <button type="submit" class="neon-button">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        Send Request
+                    </button>
+                </form>
+                <div class="response-area">
+                    <h3>Response</h3>
+                    <div id="response" class="skeleton">Waiting for request...</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="#features">Features</a>
+                    <a href="#tester">Tester</a>
+                    <a href="#about">About</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" aria-label="Twitter">🐦</a>
+                    <a href="#" aria-label="GitHub">🐙</a>
+                    <a href="#" aria-label="LinkedIn">💼</a>
+                </div>
+            </div>
+            <p>&copy; 2023 UltraHTTP. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            header.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Mobile menu functionality
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const closeMenuBtn = document.querySelector('.close-menu-btn');
+        const mobileMenu = document.querySelector('.mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+        });
+
+        closeMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Form submission and response handling
+        document.getElementById('requestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const url = document.getElementById('url').value;
+            const method = document.getElementById('method').value;
+            const headers = document.getElementById('headers').value;
+            const body = document.getElementById('body').value;
+
+            const responseElement = document.getElementById('response');
+            responseElement.classList.add('skeleton');
+            responseElement.textContent = 'Processing request...';
+
+            try {
+                const response = await fetch('/test-request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url, method, headers: JSON.parse(headers || '{}'), body }),
+                });
+
+                const result = await response.json();
+
+                setTimeout(() => {
+                    responseElement.classList.remove('skeleton');
+                    responseElement.textContent = JSON.stringify(result, null, 2);
+                }, 1000); // Simulated delay for effect
+            } catch (error) {
+                responseElement.classList.remove('skeleton');
+                responseElement.textContent = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+
+</html>
+
